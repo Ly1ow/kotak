@@ -22,15 +22,19 @@ class BookingController extends Controller
         $totalAmount = 300; // Входной билет
         
         $hasOwnSkates = $request->has('has_own_skates') ? true : false;
+        $selectedSkate = null;
         
         if (!$hasOwnSkates && $request->skate_id) {
-            $totalAmount += 150 * $request->hours;
+            $selectedSkate = Skate::find($request->skate_id);
             
-            // Уменьшаем количество коньков
-            $skate = Skate::find($request->skate_id);
-            if ($skate && $skate->quantity > 0) {
-                $skate->quantity -= 1;
-                $skate->save();
+            if ($selectedSkate && $selectedSkate->quantity > 0) {
+                $totalAmount += 150 * $request->hours;
+                
+                // Уменьшаем количество коньков
+                $selectedSkate->quantity -= 1;
+                $selectedSkate->save();
+            } else {
+                return back()->withErrors(['skate_id' => 'Выбранные коньки отсутствуют в наличии'])->withInput();
             }
         }
 
@@ -38,8 +42,9 @@ class BookingController extends Controller
             'full_name' => $request->full_name,
             'phone' => $request->phone,
             'hours' => $request->hours,
-            'skate_id' => $hasOwnSkates ? null : $request->skate_id,
-            'skate_size' => $request->skate_size,
+            'skate_id' => $hasOwnSkates ? null : ($selectedSkate ? $selectedSkate->id : null),
+            'skate_model' => $selectedSkate ? ($selectedSkate->brand . ' ' . $selectedSkate->model) : null,
+            'skate_size' => $request->skate_size ?? ($selectedSkate ? $selectedSkate->size : null),
             'has_own_skates' => $hasOwnSkates,
             'total_amount' => $totalAmount,
             'is_paid' => false,
@@ -56,17 +61,9 @@ class BookingController extends Controller
 
     public function success(Booking $booking)
     {
+        // Загружаем связанные данные
+        $booking->load('skate');
+        
         return view('booking-success', compact('booking'));
-    }
-
-    public function payment(Request $request, Booking $booking)
-    {
-        // Имитация оплаты
-        $booking->update([
-            'is_paid' => true,
-            'payment_id' => 'PAY-' . strtoupper(uniqid())
-        ]);
-
-        return response()->json(['success' => true]);
     }
 }

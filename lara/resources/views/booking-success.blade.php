@@ -77,18 +77,41 @@
                         <span class="text-gray-600">Время катания:</span>
                         <span class="font-semibold">{{ $booking->hours }} {{ $booking->hours == 1 ? 'час' : ($booking->hours < 5 ? 'часа' : 'часов') }}</span>
                     </div>
+                    
+                    <!-- Информация о коньках -->
                     <div class="flex justify-between items-center pb-2 border-b border-gray-200">
                         <span class="text-gray-600">Коньки:</span>
                         <span class="font-semibold">
                             @if($booking->has_own_skates)
-                                <span class="text-green-600">Свои коньки</span>
+                                <span class="flex items-center text-green-600">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Свои коньки
+                                </span>
                             @elseif($booking->skate)
-                                {{ $booking->skate->brand }} {{ $booking->skate->model }} (размер {{ $booking->skate_size ?? $booking->skate->size }})
+                                <div class="text-right">
+                                    <span class="block font-bold">{{ $booking->skate->brand }} {{ $booking->skate->model }}</span>
+                                    <span class="text-sm text-gray-500">Размер: EU {{ $booking->skate_size ?? $booking->skate->size }}</span>
+                                </div>
+                            @elseif($booking->skate_model)
+                                <div class="text-right">
+                                    <span class="block font-bold">{{ $booking->skate_model }}</span>
+                                    <span class="text-sm text-gray-500">Размер: EU {{ $booking->skate_size }}</span>
+                                </div>
                             @else
-                                <span class="text-gray-500">Не выбраны</span>
+                                <span class="text-gray-500">Коньки не выбраны</span>
                             @endif
                         </span>
                     </div>
+                    
+                    @if(!$booking->has_own_skates && ($booking->skate || $booking->skate_model))
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="text-gray-600">Стоимость аренды:</span>
+                        <span class="font-semibold">{{ 150 * $booking->hours }} ₽ ({{ $booking->hours }} ч × 150 ₽)</span>
+                    </div>
+                    @endif
+                    
                     <div class="flex justify-between items-center text-lg font-bold">
                         <span class="text-gray-800">Итого к оплате:</span>
                         <span class="text-2xl text-blue-600">{{ number_format($booking->total_amount, 0, '.', ' ') }} ₽</span>
@@ -156,10 +179,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // Автоматическая печать через 1 секунду (можно убрать если не нужно)
-        // setTimeout(() => window.print(), 1000);
-    </script>
 </body>
 </html>
