@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 // Публичные маршруты
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+Route::get('/booking/{booking}/success', [BookingController::class, 'success'])->name('booking.success');
 Route::post('/booking/{booking}/payment', [BookingController::class, 'payment'])->name('booking.payment');
 
 // Админ-панель (в реальном проекте добавьте middleware)
