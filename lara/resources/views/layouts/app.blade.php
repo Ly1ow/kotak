@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ледовый каток')</title>
+    <title>@yield('title', 'Ледовый каток IceArena')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -29,19 +29,19 @@
         <nav class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
                 <!-- Логотип -->
-                <div class="flex items-center space-x-2">
+                <a href="{{ route('home') }}" class="flex items-center space-x-2">
                     <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                     <span class="text-2xl font-bold text-blue-600">IceArena</span>
-                </div>
+                </a>
 
                 <!-- Навигация -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#about" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">О нас</a>
-                    <a href="#prices" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Цены</a>
-                    <a href="#skates" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Коньки</a>
-                    <a href="#contacts" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Контакты</a>
+                    <a href="{{ route('home') }}#about" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">О нас</a>
+                    <a href="{{ route('home') }}#prices" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Цены</a>
+                    <a href="{{ route('home') }}#skates" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Коньки</a>
+                    <a href="{{ route('home') }}#contacts" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">Контакты</a>
                 </div>
 
                 <!-- Кнопка покупки билета -->
@@ -58,61 +58,75 @@
 
     <!-- Модальное окно бронирования -->
     <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 hover:scale-100">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 hover:scale-100 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-bold mb-6 text-gray-800">Оформление билета</h2>
             
-            <form id="bookingForm" class="space-y-6">
+            <form id="bookingForm" method="POST" action="{{ route('booking.store') }}" class="space-y-6">
                 @csrf
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ФИО</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">ФИО *</label>
                     <input type="text" name="full_name" required 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                            placeholder="Иванов Иван Иванович">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Телефон *</label>
                     <input type="tel" name="phone" id="phone" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                            placeholder="+7 (___) ___-__-__">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Часы аренды</label>
-                    <select name="hours" required 
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Часы аренды *</label>
+                    <select name="hours" id="hours" required 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                        <option value="1">1 час</option>
-                        <option value="2">2 часа</option>
-                        <option value="3">3 часа</option>
-                        <option value="4">4 часа</option>
+                        <option value="1">1 час - 150 ₽</option>
+                        <option value="2">2 часа - 300 ₽</option>
+                        <option value="3">3 часа - 450 ₽</option>
+                        <option value="4">4 часа - 600 ₽</option>
                     </select>
                 </div>
 
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" name="has_own_skates" id="hasOwnSkates" value="1"
-                           class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                    <label for="hasOwnSkates" class="text-sm text-gray-700">У меня свои коньки</label>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" name="has_own_skates" id="hasOwnSkates" value="1"
+                               class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                        <span class="text-gray-700 font-medium">У меня свои коньки</span>
+                    </label>
+                    <p class="text-sm text-gray-500 mt-2 ml-8">Если у вас свои коньки, стоимость аренды не взимается</p>
                 </div>
 
-                <div id="skatesSelection" class="space-y-4">
+                <div id="skatesSelection" class="space-y-4 p-4 border border-gray-200 rounded-lg">
+                    <h3 class="font-semibold text-gray-700">Выберите коньки для аренды</h3>
+                    
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Выберите коньки</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Модель коньков</label>
                         <select name="skate_id" id="skateSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                            <option value="">Выберите модель</option>
-                            @foreach($skates ?? [] as $skate)
-                                <option value="{{ $skate->id }}" data-sizes="{{ $skate->size }}">
-                                    {{ $skate->brand }} {{ $skate->model }} (Размер {{ $skate->size }}) - {{ $skate->quantity }} шт.
-                                </option>
-                            @endforeach
+                            <option value="">-- Выберите модель --</option>
+                            @if(isset($skates) && count($skates) > 0)
+                                @foreach($skates as $skate)
+                                    @if($skate->quantity > 0)
+                                    <option value="{{ $skate->id }}" 
+                                            data-size="{{ $skate->size }}"
+                                            data-brand="{{ $skate->brand }}"
+                                            data-model="{{ $skate->model }}"
+                                            data-price="150">
+                                        {{ $skate->brand }} {{ $skate->model }} (Размер EU {{ $skate->size }}) - {{ $skate->quantity }} шт.
+                                    </option>
+                                    @endif
+                                @endforeach
+                            @endif
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Размер (EU)</label>
-                        <input type="number" name="skate_size" min="30" max="47"
+                        <input type="number" name="skate_size" id="skateSize" min="30" max="47"
                                class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                               placeholder="Введите размер">
+                               placeholder="Введите размер (30-47)">
+                        <p class="text-xs text-gray-500 mt-1">Если ваш размер отличается от выбранной модели</p>
                     </div>
                 </div>
 
@@ -123,10 +137,10 @@
                     </div>
                     <div class="flex justify-between text-sm mt-2" id="skatePriceDisplay">
                         <span>Аренда коньков:</span>
-                        <span class="font-semibold">0 ₽</span>
+                        <span class="font-semibold" id="skatePrice">0 ₽</span>
                     </div>
                     <div class="border-t border-blue-200 my-3"></div>
-                    <div class="flex justify-between font-bold">
+                    <div class="flex justify-between font-bold text-lg">
                         <span>Итого:</span>
                         <span id="totalAmount" class="text-blue-600">300 ₽</span>
                     </div>
@@ -153,78 +167,112 @@
             e.target.value = !x[2] ? '+7' : '+7 (' + x[2] + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
         });
 
+        // Данные коньков для JavaScript
+        const skatesData = {
+            @if(isset($skates) && count($skates) > 0)
+                @foreach($skates as $skate)
+                    {{ $skate->id }}: {
+                        brand: '{{ $skate->brand }}',
+                        model: '{{ $skate->model }}',
+                        size: {{ $skate->size }},
+                        price: 150
+                    },
+                @endforeach
+            @endif
+        };
+
         // Управление модальным окном
         function openBookingModal() {
             document.getElementById('bookingModal').classList.remove('hidden');
             document.getElementById('bookingModal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openBookingModalWithSkate(skateId, skateName, skateSize) {
+            openBookingModal();
+            
+            // Выбираем коньки в селекте
+            const skateSelect = document.getElementById('skateSelect');
+            if (skateSelect) {
+                skateSelect.value = skateId;
+            }
+            
+            // Устанавливаем размер
+            const skateSizeInput = document.getElementById('skateSize');
+            if (skateSizeInput) {
+                skateSizeInput.value = skateSize;
+            }
+            
+            // Снимаем галочку "свои коньки"
+            document.getElementById('hasOwnSkates').checked = false;
+            document.getElementById('skatesSelection').style.opacity = '1';
+            document.getElementById('skatesSelection').style.pointerEvents = 'auto';
+            
+            updateTotal();
         }
 
         function closeBookingModal() {
             document.getElementById('bookingModal').classList.add('hidden');
             document.getElementById('bookingModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
         }
 
         // Расчет стоимости
-        document.querySelector('[name="hours"]')?.addEventListener('change', updateTotal);
-        document.querySelector('[name="has_own_skates"]')?.addEventListener('change', function(e) {
-            document.getElementById('skatesSelection').style.opacity = e.target.checked ? '0.5' : '1';
-            document.getElementById('skatesSelection').style.pointerEvents = e.target.checked ? 'none' : 'auto';
+        document.getElementById('hours')?.addEventListener('change', updateTotal);
+        document.getElementById('skateSelect')?.addEventListener('change', updateTotal);
+        
+        document.getElementById('hasOwnSkates')?.addEventListener('change', function(e) {
+            const skatesSection = document.getElementById('skatesSelection');
+            if (e.target.checked) {
+                skatesSection.style.opacity = '0.5';
+                skatesSection.style.pointerEvents = 'none';
+            } else {
+                skatesSection.style.opacity = '1';
+                skatesSection.style.pointerEvents = 'auto';
+            }
             updateTotal();
         });
 
         function updateTotal() {
-            const hours = parseInt(document.querySelector('[name="hours"]').value) || 1;
-            const hasOwnSkates = document.querySelector('[name="has_own_skates"]').checked;
-            const skatePrice = hasOwnSkates ? 0 : 150 * hours;
+            const hours = parseInt(document.getElementById('hours').value) || 1;
+            const hasOwnSkates = document.getElementById('hasOwnSkates').checked;
+            const skateSelect = document.getElementById('skateSelect');
+            const selectedSkateId = skateSelect ? skateSelect.value : null;
             
-            document.getElementById('skatePriceDisplay').querySelector('span:last-child').textContent = skatePrice + ' ₽';
+            let skatePrice = 0;
+            
+            if (!hasOwnSkates && selectedSkateId) {
+                skatePrice = 150 * hours;
+            }
+            
+            document.getElementById('skatePrice').textContent = skatePrice + ' ₽';
             document.getElementById('totalAmount').textContent = (300 + skatePrice) + ' ₽';
         }
 
-        // Отправка формы
-        document.getElementById('bookingForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Валидация формы перед отправкой
+        document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+            const hasOwnSkates = document.getElementById('hasOwnSkates').checked;
+            const skateSelect = document.getElementById('skateSelect');
             
-            const formData = new FormData(this);
-            
-            try {
-                const response = await fetch('/booking', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('Бронирование успешно создано! Сумма к оплате: ' + data.amount + ' ₽');
-                    
-                    // Имитация оплаты
-                    const paymentResponse = await fetch('/booking/' + data.booking_id + '/payment', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (paymentResponse.ok) {
-                        alert('Оплата прошла успешно! Ждем вас на катке!');
-                        closeBookingModal();
-                        this.reset();
-                    }
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при бронировании');
+            if (!hasOwnSkates && (!skateSelect.value || skateSelect.value === '')) {
+                e.preventDefault();
+                alert('Пожалуйста, выберите коньки для аренды или отметьте "У меня свои коньки"');
+                return;
             }
+            
+            // Можно добавить дополнительную валидацию
         });
 
         // Закрытие по клику вне модального окна
         document.getElementById('bookingModal')?.addEventListener('click', function(e) {
             if (e.target === this) {
+                closeBookingModal();
+            }
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
                 closeBookingModal();
             }
         });

@@ -102,32 +102,89 @@
     <section id="skates" class="py-20">
         <div class="container mx-auto px-4">
             <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">Наши коньки</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                @foreach($skates as $skate)
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover-scale">
-                    <img src="{{ $skate->image ?? 'https://via.placeholder.com/400x300' }}" 
-                         alt="{{ $skate->model }}" 
-                         class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold">{{ $skate->brand }}</h3>
-                                <p class="text-gray-600">{{ $skate->model }}</p>
-                            </div>
-                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">
-                                Размер {{ $skate->size }}
-                            </span>
+            
+            @if($skates && count($skates) > 0)
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($skates as $skate)
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover-scale group">
+                        <div class="relative h-56 bg-gradient-to-br from-blue-100 to-cyan-100 overflow-hidden">
+                            @if($skate->image)
+                                <img src="{{ $skate->image }}" 
+                                     alt="{{ $skate->brand }} {{ $skate->model }}" 
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="w-24 h-24 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                            @endif
+                            
+                            @if($skate->quantity <= 2)
+                                <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                    Осталось {{ $skate->quantity }} шт.
+                                </div>
+                            @endif
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-blue-600">150 ₽/час</span>
-                            <span class="text-sm {{ $skate->quantity > 0 ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $skate->quantity > 0 ? 'В наличии: ' . $skate->quantity : 'Нет в наличии' }}
-                            </span>
+                        
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">{{ $skate->brand }}</h3>
+                                    <p class="text-gray-600">{{ $skate->model }}</p>
+                                </div>
+                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">
+                                    EU {{ $skate->size }}
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mt-4">
+                                <div>
+                                    <span class="text-2xl font-bold text-blue-600">150 ₽</span>
+                                    <span class="text-sm text-gray-500">/час</span>
+                                </div>
+                                
+                                @if($skate->quantity > 0)
+                                    <span class="flex items-center text-green-600 text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="4"/>
+                                        </svg>
+                                        В наличии: {{ $skate->quantity }}
+                                    </span>
+                                @else
+                                    <span class="flex items-center text-red-600 text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="10" cy="10" r="4"/>
+                                        </svg>
+                                        Нет в наличии
+                                    </span>
+                                @endif
+                            </div>
+                            
+                            @if($skate->quantity > 0)
+                            <button onclick="openBookingModalWithSkate({{ $skate->id }}, '{{ $skate->brand }} {{ $skate->model }}', {{ $skate->size }})" 
+                                    class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300">
+                                Забронировать
+                            </button>
+                            @else
+                            <button disabled 
+                                    class="w-full mt-4 bg-gray-300 text-gray-500 py-2 rounded-lg cursor-not-allowed">
+                                Нет в наличии
+                            </button>
+                            @endif
                         </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
+            @else
+                <div class="text-center py-12">
+                    <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Коньки временно отсутствуют</h3>
+                    <p class="text-gray-500">Загляните позже или приходите со своими коньками</p>
+                </div>
+            @endif
         </div>
     </section>
 

@@ -21,23 +21,32 @@ return new class extends Migration
             $table->boolean('is_paid')->default(false);
             $table->string('payment_id')->nullable();
             $table->timestamps();
+            
+            // Индексы для оптимизации
+            $table->index('skate_id');
+            $table->index('phone');
+            $table->index('created_at');
         });
 
-        // Добавляем внешний ключ после создания таблицы
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->foreign('skate_id')
-                  ->references('id')
-                  ->on('skates')
-                  ->onDelete('set null');
-        });
+        // Добавляем внешний ключ, если таблица skates уже существует
+        if (Schema::hasTable('skates')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->foreign('skate_id')
+                      ->references('id')
+                      ->on('skates')
+                      ->onDelete('set null');
+            });
+        }
     }
 
     public function down()
     {
-        // Сначала удаляем внешний ключ, потом таблицу
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->dropForeign(['skate_id']);
-        });
+        // Сначала удаляем внешний ключ, если он существует
+        if (Schema::hasTable('bookings')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->dropForeign(['skate_id']);
+            });
+        }
         
         Schema::dropIfExists('bookings');
     }
